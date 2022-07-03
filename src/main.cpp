@@ -83,6 +83,14 @@ void getModbus(){
   }
 }
 
+void SDwrite(String q){
+  myFile = SD.open("XYLoad.txt", FILE_WRITE);
+  if (myFile) {
+    myFile.println(q);
+    com.println(F("Ok"));
+  }
+  myFile.close();
+}
 
 void setup() {
   com.begin(cbaud);
@@ -101,6 +109,8 @@ void setup() {
   if(SD.begin(ss)) //cek SDcard
   {
     com.println(F("SD Ready!"));
+    SDwrite("\n\n\n############## START ###############\n\n\n");
+
   }
   else{
     com.println(F("SD ERROR!"));
@@ -112,20 +122,12 @@ void setup() {
   // put your setup code here, to run once:
 }
 
-void SDwrite(){
-  myFile = SD.open("XYLoad.txt", FILE_WRITE);
-  if (myFile) {
-    myFile.println(z);
-    com.println(F("Ok"));
-  }
-  myFile.close();
-}
-
 void loop() {
   // put your main code here, to run repeatedly:
   z = readModbusFloat(1,452);
   z = abs(z / 10);
   com.println(z);
   delay(1000);
-  SDwrite();
+  String w = String(z);
+  SDwrite(w);
 }
