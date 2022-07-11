@@ -67,7 +67,8 @@ float readModbusFloat(char addr,uint16_t REG){
       data[j] = node.getResponseBuffer(j);
     }
     value = data[0];
-    return value;
+    int hasil = data[0];
+    return hasil;
   }
   else{
     com.print(F("Fail addr>>> ")); com.println(REG);
@@ -86,11 +87,25 @@ void getModbus(){
 void SDwrite(String q){
   myFile = SD.open("XYLoad.txt", FILE_WRITE);
   if (myFile) {
-    myFile.println(q);
+    if(myFile.println(q)){
+      com.println(F("Ok"));
+    }
+  }
+  myFile.close();
+}
+
+void SDwriteraw(String v){
+  myFile.close();
+  myFile = SD.open("XYLoadraw.txt", FILE_WRITE);
+  if (myFile) {
+    myFile.println(v);
     com.println(F("Ok"));
   }
   myFile.close();
 }
+
+void(* resetFunc) (void) = 0;  // declare reset fuction at address 0
+
 
 void setup() {
   com.begin(cbaud);
@@ -114,9 +129,8 @@ void setup() {
   }
   else{
     com.println(F("SD ERROR!"));
-    while(1){
-      ;
-    }
+    delay(1000);
+    resetFunc();
   }
 
   // put your setup code here, to run once:
@@ -125,9 +139,13 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   z = readModbusFloat(1,452);
-  z = abs(z / 10);
-  com.println(z);
+  com.print(z);
+  com.print("   ");
+  z = abs(z);
   delay(1000);
-  String w = String(z);
-  SDwrite(w);
+  z=z/10;
+  com.println(z);
+  SDwriteraw(String(z));
+  SDwrite(String(z));
+  delay(1000);
 }
