@@ -6,3 +6,5 @@ part yang digunakan
 - arduino nano
 - modul max485
 - sdcard module
+
+yang butuh skematik ada di folder modbusBoard. software yang diginakan pakai eagle
